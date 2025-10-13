@@ -1,0 +1,61 @@
+- type: Database
+  id: DB-CreateVerificationCode
+  description: 为手机号生成并保存6位验证码，设置有效期60秒。
+  dependencies:
+    - none
+  acceptanceCriteria:
+    - 插入或更新验证码记录，包含 phoneNumber, code, expiresAt（当前时间+60秒）。
+    - 每次请求会生成新的6位数字验证码。
+    - 如果存在旧验证码，新的验证码应覆盖旧记录或写入新记录但校验时以最新创建时间为准。
+  changeLog:
+    - date: "2025-10-13"
+      description: "初始创建。"
+
+- type: Database
+  id: DB-FindVerificationCodeByPhone
+  description: 根据手机号读取最新的验证码记录。
+  dependencies:
+    - none
+  acceptanceCriteria:
+    - 能根据 phoneNumber 返回最近生成的验证码及其 expiresAt。
+    - 当手机号没有验证码记录时返回空结果。
+  changeLog:
+    - date: "2025-10-13"
+      description: "初始创建。"
+
+- type: Database
+  id: DB-VerifyCode
+  description: 校验给定手机号和验证码是否匹配且未过期（<=60秒）。
+  dependencies:
+    - DB-FindVerificationCodeByPhone
+  acceptanceCriteria:
+    - 当验证码匹配且当前时间在 expiresAt 之前，返回通过。
+    - 当验证码不匹配，返回失败（错误“验证码错误”）。
+    - 当验证码过期，返回失败（错误“验证码已过期”）。
+  changeLog:
+    - date: "2025-10-13"
+      description: "初始创建。"
+
+- type: Database
+  id: DB-FindUserByPhone
+  description: 根据手机号查找用户是否已注册。
+  dependencies:
+    - none
+  acceptanceCriteria:
+    - 当手机号存在时返回用户记录（至少包含 userId）。
+    - 当手机号不存在时返回空结果。
+  changeLog:
+    - date: "2025-10-13"
+      description: "初始创建。"
+
+- type: Database
+  id: DB-CreateUser
+  description: 根据手机号创建新用户记录（未注册时）。
+  dependencies:
+    - none
+  acceptanceCriteria:
+    - 当手机号未被注册时，插入新用户记录（至少包含 userId, phoneNumber, createdAt）。
+    - 当手机号已被注册时，不创建新记录并返回已存在的用户或标记为已存在。
+  changeLog:
+    - date: "2025-10-13"
+      description: "新增注册相关接口。"

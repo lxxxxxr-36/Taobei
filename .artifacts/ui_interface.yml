@@ -1,0 +1,53 @@
+- type: Frontend
+  id: UI-LoginForm
+  description: 用户登录表单，包含手机号输入、验证码输入、获取验证码按钮和登录按钮。
+  properties:
+    - name: onLoginSuccess
+      type: function
+      description: 登录成功后的回调函数。
+  state:
+    - phoneNumber
+    - verificationCode
+    - error
+    - isLoading
+    - countdownSeconds
+  dependencies:
+    - API-POST-RequestCode
+    - API-POST-Login
+  acceptanceCriteria:
+    - 组件渲染手机号输入框、验证码输入框、“获取验证码”按钮和“登录”按钮。
+    - 点击“获取验证码”时：校验手机号格式，调用 API-POST-RequestCode；当返回成功后，启动60秒倒计时并禁用按钮。
+    - 倒计时期间，“获取验证码”按钮不可点击；倒计时结束后恢复可点击。
+    - 点击“登录”时：调用 API-POST-Login；根据返回错误显示提示信息。
+    - 登录成功时提示“登录成功”，并触发 onLoginSuccess 或根据 redirectTo 跳转到首页。
+  changeLog:
+    - date: "2025-10-13"
+      description: "初始创建。"
+
+- type: Frontend
+  id: UI-RegisterForm
+  description: 用户注册表单，包含手机号输入、验证码输入、获取验证码按钮、协议勾选、注册按钮。
+  properties:
+    - name: onRegisterSuccess
+      type: function
+      description: 注册成功后的回调函数。
+  state:
+    - phoneNumber
+    - verificationCode
+    - agreeProtocol (boolean)
+    - error
+    - isLoading
+    - countdownSeconds
+  dependencies:
+    - API-POST-RegisterRequestCode
+    - API-POST-Register
+  acceptanceCriteria:
+    - 组件渲染手机号输入框、验证码输入框、“获取验证码”按钮、“同意《淘贝用户协议》”勾选框和“注册”按钮。
+    - 未勾选协议时，“注册”按钮不可点击；勾选后可点击。
+    - 点击“获取验证码”时：校验手机号格式，调用 API-POST-RegisterRequestCode；成功后启动60秒倒计时并禁用按钮。
+    - 倒计时期间，“获取验证码”按钮不可点击；倒计时结束后恢复可点击。
+    - 点击“注册”时：调用 API-POST-Register；根据返回状态显示提示信息（409、400、410、412）。
+    - 成功注册时提示“注册成功”，并触发 onRegisterSuccess 或根据 redirectTo 跳转到首页。
+  changeLog:
+    - date: "2025-10-13"
+      description: "新增注册组件接口。"
