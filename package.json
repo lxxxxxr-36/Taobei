@@ -8,7 +8,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:backend": "cd backend && npm test",
-    "start:backend": "node backend/src/app.js",
+    "start:backend": "node backend/src/server.js",
     "start": "npm run start:backend"
   },
   "dependencies": {
