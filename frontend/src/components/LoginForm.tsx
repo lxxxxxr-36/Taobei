@@ -32,6 +32,12 @@ export default function LoginForm(props: { onLoginSuccess?: () => void }) {
       return;
     }
 
+    // 新规则：如果在冷却期内，显示提示弹窗而不是禁用按钮
+    if (countdownSeconds > 0) {
+      alert('六十秒内不要重复获取');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await apiService.requestLoginCode(phoneNumber);
@@ -111,7 +117,7 @@ export default function LoginForm(props: { onLoginSuccess?: () => void }) {
           />
           <button 
             className="code-button"
-            disabled={countdownSeconds > 0 || isLoading || !isValidPhone(phoneNumber)} 
+            disabled={isLoading || !isValidPhone(phoneNumber)} 
             onClick={requestCode}
           >
             {countdownSeconds > 0 ? `${countdownSeconds}s` : '获取验证码'}
